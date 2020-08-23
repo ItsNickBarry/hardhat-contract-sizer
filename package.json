@@ -1,0 +1,31 @@
+{
+  "name": "buidler-contract-sizer",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "Output Solidity contract sizes with Buidler",
+  "keywords": [
+    "buidler",
+    "abi",
+    "solidity",
+    "solc",
+    "smart-contracts",
+    "ethereum",
+    "blockchain",
+    "wow",
+    "bytecode"
+  ],
+  "repository": "https://github.com/ItsNickBarry/buidler-contract-sizer",
+  "author": "Nick Barry",
+  "main": "index.js",
+  "peerDependencies": {
+    "@nomiclabs/buidler": "^1.4.0"
+  },
+  "devDependencies": {
+    "@nomiclabs/buidler": "^1.4.0",
+    "eslint": "^7.6.0"
+  },
+  "dependencies": {
+    "cli-table3": "^0.6.0",
+    "colors": "^1.4.0"
+  }
+}
