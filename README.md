@@ -35,3 +35,7 @@ Run the included Buidler task to output compiled contract sizes:
 ```bash
 yarn run buidler size-contracts
 ```
+
+### TypeScript Support
+
+For TypeScript compatibility, add `'node_modules/buidler-contract-sizer/type-extensions.d.ts'` to the `files` array in `tsconfig.json`.
