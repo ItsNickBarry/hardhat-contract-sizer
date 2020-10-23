@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { extendConfig } = require('hardhat/config');
 const colors = require('colors/safe');
 const Table = require('cli-table3');
 
@@ -7,11 +8,17 @@ const {
   TASK_COMPILE,
 } = require('hardhat/builtin-tasks/task-names');
 
-const CONFIG = {
-  alphaSort: false,
-  runOnCompile: false,
-  disambiguatePaths: false,
-};
+extendConfig(function (config, userConfig) {
+  config.contractSizer = Object.assign(
+    {
+      alphaSort: false,
+      runOnCompile: false,
+      disambiguatePaths: false,
+    },
+    userConfig.contractSizer
+  );
+});
+
 
 const NAME = 'size-contracts';
 const DESC = 'Output the size of compiled contracts';
@@ -19,14 +26,12 @@ const DESC = 'Output the size of compiled contracts';
 const SIZE_LIMIT = 24576;
 
 task(NAME, DESC, async function (args, hre) {
-  let config = Object.assign({}, CONFIG, hre.config.contractSizer);
-
   let files = await hre.artifacts.getArtifactPaths();
 
   let contracts = files.map(function (file) {
     let name = file.replace(hre.config.paths.root, '');
 
-    if (!config.disambiguatePaths) {
+    if (!hre.config.contractSizer.disambiguatePaths) {
       name = path.basename(name).replace('.json', '');
     }
 
@@ -36,7 +41,7 @@ task(NAME, DESC, async function (args, hre) {
     return { name, size };
   });
 
-  if (config.alphaSort) {
+  if (hre.config.contractSizer.alphaSort) {
     contracts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
   } else {
     contracts.sort((a, b) => a.size - b.size);
@@ -91,11 +96,9 @@ task(NAME, DESC, async function (args, hre) {
 });
 
 task(TASK_COMPILE, async function (args, hre, runSuper) {
-  let config = Object.assign({}, CONFIG, hre.config.contractSizer);
-
   await runSuper();
 
-  if (config.runOnCompile) {
+  if (hre.config.contractSizer.runOnCompile) {
     await hre.run(NAME);
   }
 });
