@@ -1,14 +1,16 @@
 const fs = require('fs');
+const path = require('path');
 const colors = require('colors/safe');
 const Table = require('cli-table3');
 
 const {
   TASK_COMPILE,
-} = require('@nomiclabs/buidler/builtin-tasks/task-names');
+} = require('hardhat/builtin-tasks/task-names');
 
 const CONFIG = {
   alphaSort: false,
   runOnCompile: false,
+  disambiguatePaths: false,
 };
 
 const NAME = 'size-contracts';
@@ -16,17 +18,22 @@ const DESC = 'Output the size of compiled contracts';
 
 const SIZE_LIMIT = 24576;
 
-task(NAME, DESC, async function (args, bre) {
-  let config = Object.assign({}, CONFIG, bre.config.contractSizer);
+task(NAME, DESC, async function (args, hre) {
+  let config = Object.assign({}, CONFIG, hre.config.contractSizer);
 
-  let files = fs.readdirSync(bre.config.paths.artifacts);
+  let files = await hre.artifacts.getArtifactPaths();
 
   let contracts = files.map(function (file) {
-    let { deployedBytecode } = JSON.parse(fs.readFileSync(`${ bre.config.paths.artifacts }/${ file }`));
-    return {
-      name: file.replace('.json', ''),
-      size: Buffer.from(deployedBytecode.slice(2), 'hex').length,
-    };
+    let name = file.replace(hre.config.paths.root, '');
+
+    if (!config.disambiguatePaths) {
+      name = path.basename(name).replace('.json', '');
+    }
+
+    let { deployedBytecode } = JSON.parse(fs.readFileSync(file));
+    let size = Buffer.from(deployedBytecode.slice(2), 'hex').length;
+
+    return { name, size };
   });
 
   if (config.alphaSort) {
@@ -83,12 +90,12 @@ task(NAME, DESC, async function (args, bre) {
   }
 });
 
-task(TASK_COMPILE, async function (args, bre, runSuper) {
-  let config = Object.assign({}, CONFIG, bre.config.contractSizer);
+task(TASK_COMPILE, async function (args, hre, runSuper) {
+  let config = Object.assign({}, CONFIG, hre.config.contractSizer);
 
   await runSuper();
 
   if (config.runOnCompile) {
-    await bre.run(NAME);
+    await hre.run(NAME);
   }
 });

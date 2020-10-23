@@ -1,9 +1,10 @@
 {
-  "name": "buidler-contract-sizer",
-  "version": "1.0.2",
+  "name": "hardhat-contract-sizer",
+  "version": "2.0.0",
   "license": "MIT",
-  "description": "Output Solidity contract sizes with Buidler",
+  "description": "Output Solidity contract sizes with Hardhat",
   "keywords": [
+    "hardhat",
     "buidler",
     "abi",
     "solidity",
@@ -14,14 +15,14 @@
     "wow",
     "bytecode"
   ],
-  "repository": "https://github.com/ItsNickBarry/buidler-contract-sizer",
+  "repository": "https://github.com/ItsNickBarry/hardhat-contract-sizer",
   "author": "Nick Barry",
   "main": "index.js",
   "peerDependencies": {
-    "@nomiclabs/buidler": "^1.4.0"
+    "hardhat": "^2.0.0"
   },
   "devDependencies": {
-    "@nomiclabs/buidler": "^1.4.0",
+    "hardhat": "^2.0.0",
     "eslint": "^7.6.0"
   },
   "dependencies": {

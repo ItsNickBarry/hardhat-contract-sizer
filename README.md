@@ -1,19 +1,21 @@
-# Buidler Contract Sizer
+# Hardhat Contract Sizer
 
-Output Solidity contract sizes with Buidler.
+Output Solidity contract sizes with Hardhat.
+
+Versions of this plugin prior to `2.0.0` were released as `buidler-contract-sizer`.
 
 ## Installation
 
 ```bash
-yarn add --dev buidler-contract-sizer
+yarn add --dev hardhat-contract-sizer
 ```
 
 ## Usage
 
-Load plugin in Buidler config:
+Load plugin in Hardhat config:
 
 ```javascript
-usePlugin('buidler-contract-sizer');
+require('hardhat-contract-sizer');
 ```
 
 Add configuration under the `contractSizer` key:
@@ -22,20 +24,18 @@ Add configuration under the `contractSizer` key:
 |-|-|-|
 | `alphaSort` | whether to sort results table alphabetically (default sort is by contract size) | `false`
 | `runOnCompile` | whether to output contract sizes automatically after compilation | `false` |
+| `disambiguatePaths` | whether to output the full path to the compilation artifact (relative to the Hardhat root directory) | `false` |
 
 ```javascript
 contractSizer: {
   alphaSort: true,
   runOnCompile: true,
+  disambiguatePaths: false,
 }
 ```
 
-Run the included Buidler task to output compiled contract sizes:
+Run the included Hardhat task to output compiled contract sizes:
 
 ```bash
-yarn run buidler size-contracts
+yarn run hardhat size-contracts
 ```
-
-### TypeScript Support
-
-For TypeScript compatibility, add `'node_modules/buidler-contract-sizer/type-extensions.d.ts'` to the `files` array in `tsconfig.json`.
