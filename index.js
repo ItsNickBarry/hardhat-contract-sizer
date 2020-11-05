@@ -19,7 +19,6 @@ extendConfig(function (config, userConfig) {
   );
 });
 
-
 const NAME = 'size-contracts';
 const DESC = 'Output the size of compiled contracts';
 
@@ -71,6 +70,10 @@ task(NAME, DESC, async function (args, hre) {
   let largeContracts = 0;
 
   for (let contract of contracts) {
+    if (!contract.size) {
+      continue;
+    }
+
     let name = contract.name;
     let size = (contract.size / 1024).toFixed(2);
 
