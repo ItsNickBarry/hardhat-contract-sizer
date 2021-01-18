@@ -2,7 +2,7 @@
 
 Output Solidity contract sizes with Hardhat.
 
-Versions of this plugin prior to `2.0.0` were released as `buidler-contract-sizer`.
+> Versions of this plugin prior to `2.0.0` were released as `buidler-contract-sizer`.
 
 ## Installation
 
