@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 const { extendConfig } = require('hardhat/config');
 const colors = require('colors/safe');
 const Table = require('cli-table3');
@@ -25,20 +23,18 @@ const DESC = 'Output the size of compiled contracts';
 const SIZE_LIMIT = 24576;
 
 task(NAME, DESC, async function (args, hre) {
-  let files = await hre.artifacts.getArtifactPaths();
+  const contracts = [];
 
-  let contracts = files.map(function (file) {
-    let name = file.replace(hre.config.paths.root, '');
+  for (let name of await hre.artifacts.getAllFullyQualifiedNames()) {
+    const { deployedBytecode } = await hre.artifacts.readArtifact(name);
+    const size = Buffer.from(deployedBytecode.slice(2), 'hex').length;
 
     if (!hre.config.contractSizer.disambiguatePaths) {
-      name = path.basename(name).replace('.json', '');
+      name = name.split(':').pop();
     }
 
-    let { deployedBytecode } = JSON.parse(fs.readFileSync(file));
-    let size = Buffer.from(deployedBytecode.slice(2), 'hex').length;
-
-    return { name, size };
-  });
+    contracts.push({ name, size });
+  }
 
   if (hre.config.contractSizer.alphaSort) {
     contracts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
@@ -46,7 +42,7 @@ task(NAME, DESC, async function (args, hre) {
     contracts.sort((a, b) => a.size - b.size);
   }
 
-  let table = new Table({
+  const table = new Table({
     head: [colors.bold('Contract Name'), 'Size (Kb)'],
     style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
     chars: {
@@ -74,7 +70,6 @@ task(NAME, DESC, async function (args, hre) {
       continue;
     }
 
-    let name = contract.name;
     let size = (contract.size / 1024).toFixed(2);
 
     if (contract.size > SIZE_LIMIT) {
@@ -85,7 +80,7 @@ task(NAME, DESC, async function (args, hre) {
     }
 
     table.push([
-      { content: name },
+      { content: contract.name },
       { content: size, hAlign: 'right' },
     ]);
   }
