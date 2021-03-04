@@ -35,7 +35,11 @@ task(NAME, DESC, async function (args, hre) {
     }
 
     let { deployedBytecode } = JSON.parse(fs.readFileSync(file));
-    let size = Buffer.from(deployedBytecode.slice(2), 'hex').length;
+
+    let size = Buffer.from(
+      deployedBytecode.replace(/__\$\w*\$__/g, '0'.repeat(40)).slice(2),
+      'hex'
+    ).length;
 
     return { name, size };
   });
