@@ -27,7 +27,10 @@ task(NAME, DESC, async function (args, hre) {
 
   for (let name of await hre.artifacts.getAllFullyQualifiedNames()) {
     const { deployedBytecode } = await hre.artifacts.readArtifact(name);
-    const size = Buffer.from(deployedBytecode.slice(2), 'hex').length;
+    const size = Buffer.from(
+      deployedBytecode.replace(/__\$\w*\$__/g, '0'.repeat(40)).slice(2),
+      'hex'
+    ).length;
 
     if (!hre.config.contractSizer.disambiguatePaths) {
       name = name.split(':').pop();
