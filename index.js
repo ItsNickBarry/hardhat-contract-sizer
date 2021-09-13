@@ -2,6 +2,8 @@ const { extendConfig } = require('hardhat/config');
 const colors = require('colors/safe');
 const Table = require('cli-table3');
 
+const { HardhatPluginError } = require('hardhat/plugins');
+
 const {
   TASK_COMPILE,
 } = require('hardhat/builtin-tasks/task-names');
@@ -10,8 +12,9 @@ extendConfig(function (config, userConfig) {
   config.contractSizer = Object.assign(
     {
       alphaSort: false,
-      runOnCompile: false,
       disambiguatePaths: false,
+      runOnCompile: false,
+      strict: false,
     },
     userConfig.contractSizer
   );
@@ -90,9 +93,16 @@ task(NAME, DESC, async function (args, hre) {
 
   console.log(table.toString());
 
-  if (largeContracts) {
+  if (largeContracts > 0) {
     console.log();
-    console.log(colors.red(`Warning: ${ largeContracts } contracts exceed the size limit for mainnet deployment.`));
+
+    const message = `Warning: ${ largeContracts } contracts exceed the size limit for mainnet deployment.`;
+
+    if (hre.config.contractSizer.strict) {
+      throw new HardhatPluginError(message);
+    } else {
+      console.log(colors.red(message));
+    }
   }
 });
 

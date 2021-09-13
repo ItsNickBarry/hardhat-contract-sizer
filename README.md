@@ -25,12 +25,14 @@ Add configuration under the `contractSizer` key:
 | `alphaSort` | whether to sort results table alphabetically (default sort is by contract size) | `false`
 | `runOnCompile` | whether to output contract sizes automatically after compilation | `false` |
 | `disambiguatePaths` | whether to output the full path to the compilation artifact (relative to the Hardhat root directory) | `false` |
+| `strict` | whether to throw an error if any contracts exceed the size limit | `false` |
 
 ```javascript
 contractSizer: {
   alphaSort: true,
-  runOnCompile: true,
   disambiguatePaths: false,
+  runOnCompile: true,
+  strict: true,
 }
 ```
 
