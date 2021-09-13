@@ -4,7 +4,7 @@ declare module 'hardhat/types/config' {
   interface HardhatUserConfig {
     contractSizer?: {
       alphaSort?: boolean,
-      disambiguatePaths: boolean,
+      disambiguatePaths?: boolean,
       runOnCompile?: boolean,
       strict?: boolean,
     }
