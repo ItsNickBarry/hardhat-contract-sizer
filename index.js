@@ -49,7 +49,7 @@ task(NAME, DESC, async function (args, hre) {
   }
 
   const table = new Table({
-    head: [colors.bold('Contract Name'), 'Size (Kb)'],
+    head: [colors.bold('Contract Name'), 'Size (KB)'],
     style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
     chars: {
       mid: '·',
@@ -76,7 +76,7 @@ task(NAME, DESC, async function (args, hre) {
       continue;
     }
 
-    let size = (contract.size / 1024).toFixed(2);
+    let size = (contract.size / 1000).toFixed(3);
 
     if (contract.size > SIZE_LIMIT) {
       size = colors.red.bold(size);
