@@ -7,6 +7,8 @@ declare module 'hardhat/types/config' {
       disambiguatePaths?: boolean,
       runOnCompile?: boolean,
       strict?: boolean,
+      only?: string[],
+      except?: string[],
     }
   }
 
@@ -16,6 +18,8 @@ declare module 'hardhat/types/config' {
       disambiguatePaths: boolean,
       runOnCompile: boolean,
       strict: boolean
+      only: string[],
+      except: string[],
     }
   }
 }

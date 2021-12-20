@@ -26,6 +26,8 @@ Add configuration under the `contractSizer` key:
 | `runOnCompile` | whether to output contract sizes automatically after compilation | `false` |
 | `disambiguatePaths` | whether to output the full path to the compilation artifact (relative to the Hardhat root directory) | `false` |
 | `strict` | whether to throw an error if any contracts exceed the size limit (may cause compatibility issues with `solidity-coverage`) | `false` |
+| `only` | `Array` of `String` matchers used to select included contracts, defaults to all contracts if `length` is 0 | `[]` |
+| `except` | `Array` of `String` matchers used to exclude contracts | `[]` |
 
 ```javascript
 contractSizer: {
@@ -33,6 +35,7 @@ contractSizer: {
   disambiguatePaths: false,
   runOnCompile: true,
   strict: true,
+  only: [':ERC20$'],
 }
 ```
 

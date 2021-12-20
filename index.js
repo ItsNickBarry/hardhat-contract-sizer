@@ -10,6 +10,8 @@ extendConfig(function (config, userConfig) {
       disambiguatePaths: false,
       runOnCompile: false,
       strict: false,
+      only: [],
+      except: [],
     },
     userConfig.contractSizer
   );

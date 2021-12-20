@@ -9,18 +9,21 @@ task('size-contracts', 'Output the size of compiled contracts', async function (
 
   const contracts = [];
 
-  for (let name of await hre.artifacts.getAllFullyQualifiedNames()) {
-    const { deployedBytecode } = await hre.artifacts.readArtifact(name);
+  for (let fullName of await hre.artifacts.getAllFullyQualifiedNames()) {
+    if (config.only.length && !config.only.some(m => fullName.match(m))) continue;
+    if (config.except.length && config.except.some(m => fullName.match(m))) continue;
+
+    const { deployedBytecode } = await hre.artifacts.readArtifact(fullName);
     const size = Buffer.from(
       deployedBytecode.replace(/__\$\w*\$__/g, '0'.repeat(40)).slice(2),
       'hex'
     ).length;
 
     if (!config.disambiguatePaths) {
-      name = name.split(':').pop();
+      fullName = fullName.split(':').pop();
     }
 
-    contracts.push({ name, size });
+    contracts.push({ name: fullName, size });
   }
 
   if (config.alphaSort) {
