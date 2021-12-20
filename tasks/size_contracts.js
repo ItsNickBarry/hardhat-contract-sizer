@@ -5,6 +5,8 @@ const { HardhatPluginError } = require('hardhat/plugins');
 const SIZE_LIMIT = 24576;
 
 task('size-contracts', 'Output the size of compiled contracts', async function (args, hre) {
+  const config = hre.config.contractSizer;
+
   const contracts = [];
 
   for (let name of await hre.artifacts.getAllFullyQualifiedNames()) {
@@ -14,14 +16,14 @@ task('size-contracts', 'Output the size of compiled contracts', async function (
       'hex'
     ).length;
 
-    if (!hre.config.contractSizer.disambiguatePaths) {
+    if (!config.disambiguatePaths) {
       name = name.split(':').pop();
     }
 
     contracts.push({ name, size });
   }
 
-  if (hre.config.contractSizer.alphaSort) {
+  if (config.alphaSort) {
     contracts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
   } else {
     contracts.sort((a, b) => a.size - b.size);
@@ -77,7 +79,7 @@ task('size-contracts', 'Output the size of compiled contracts', async function (
 
     const message = `Warning: ${ largeContracts } contracts exceed the size limit for mainnet deployment.`;
 
-    if (hre.config.contractSizer.strict) {
+    if (config.strict) {
       throw new HardhatPluginError(message);
     } else {
       console.log(colors.red(message));
