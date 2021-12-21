@@ -6,6 +6,7 @@ declare module 'hardhat/types/config' {
       alphaSort?: boolean,
       disambiguatePaths?: boolean,
       runOnCompile?: boolean,
+      alwaysRecompile?: boolean,
       strict?: boolean,
       only?: string[],
       except?: string[],
@@ -17,6 +18,7 @@ declare module 'hardhat/types/config' {
       alphaSort: boolean,
       disambiguatePaths: boolean,
       runOnCompile: boolean,
+      alwaysRecompile: boolean,
       strict: boolean
       only: string[],
       except: string[],

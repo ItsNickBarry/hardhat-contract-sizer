@@ -9,6 +9,7 @@ extendConfig(function (config, userConfig) {
       alphaSort: false,
       disambiguatePaths: false,
       runOnCompile: false,
+      alwaysRecompile: false,
       strict: false,
       only: [],
       except: [],

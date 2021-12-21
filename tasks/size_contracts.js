@@ -7,6 +7,10 @@ const SIZE_LIMIT = 24576;
 task('size-contracts', 'Output the size of compiled contracts', async function (args, hre) {
   const config = hre.config.contractSizer;
 
+  if (config.alwaysRecompile) {
+    await hre.run('compile');
+  }
+
   const contracts = [];
 
   for (let fullName of await hre.artifacts.getAllFullyQualifiedNames()) {
