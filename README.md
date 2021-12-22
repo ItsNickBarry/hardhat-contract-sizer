@@ -44,3 +44,10 @@ Run the included Hardhat task to output compiled contract sizes:
 ```bash
 yarn run hardhat size-contracts
 ```
+
+By default, the hardhat `compile` step is run before sizing contracts. You can disable
+this behavior by specifying `--compile false` when you run the command:
+
+```bash
+yarn run hardhat size-contracts --compile false
+```
