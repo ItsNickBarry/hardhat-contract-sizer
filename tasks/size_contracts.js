@@ -1,19 +1,18 @@
 const colors = require('colors/safe');
 const Table = require('cli-table3');
 const { HardhatPluginError } = require('hardhat/plugins');
-const { types } = require('hardhat/config')
 
 const SIZE_LIMIT = 24576;
 
 task('size-contracts', 'Output the size of compiled contracts')
-  .addOptionalParam('compile', 'enable/disable automatic compilation before sizing contracts', true, types.boolean)
+  .addFlag('noCompile', 'Don\'t compile before running this task')
   .setAction(sizeContracts);
 
 async function sizeContracts(args, hre) {
   const config = hre.config.contractSizer;
 
-  if (args.compile) {
-    await hre.run('compile');
+  if (!args.noCompile) {
+    await hre.run('compile', { noSizeContracts: true });
   }
 
   const contracts = [];

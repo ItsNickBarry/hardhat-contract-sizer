@@ -2,11 +2,13 @@ const {
   TASK_COMPILE,
 } = require('hardhat/builtin-tasks/task-names');
 
-task(TASK_COMPILE, async function (args, hre, runSuper) {
+task(TASK_COMPILE).addFlag(
+  'noSizeContracts', 'Don\'t size contracts after running this task, even if runOnCompile option is enabled'
+).setAction(async function (args, hre, runSuper) {
   await runSuper();
 
-  if (hre.config.contractSizer.runOnCompile) {
+  if (hre.config.contractSizer.runOnCompile && !args.noSizeContracts) {
     // Disable compile to avoid an infinite loop
-    await hre.run('size-contracts', { compile: false });
+    await hre.run('size-contracts', { noCompile: true });
   }
 });
