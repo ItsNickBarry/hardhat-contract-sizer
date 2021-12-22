@@ -6,6 +6,7 @@ task(TASK_COMPILE, async function (args, hre, runSuper) {
   await runSuper();
 
   if (hre.config.contractSizer.runOnCompile) {
-    await hre.run('size-contracts');
+    // Disable compile to avoid an infinite loop
+    await hre.run('size-contracts', { compile: false });
   }
 });
