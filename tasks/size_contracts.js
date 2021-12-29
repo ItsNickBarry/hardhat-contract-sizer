@@ -4,11 +4,11 @@ const { HardhatPluginError } = require('hardhat/plugins');
 
 const SIZE_LIMIT = 24576;
 
-task('size-contracts', 'Output the size of compiled contracts')
-  .addFlag('noCompile', 'Don\'t compile before running this task')
-  .setAction(sizeContracts);
-
-async function sizeContracts(args, hre) {
+task(
+  'size-contracts', 'Output the size of compiled contracts'
+).addFlag(
+  'noCompile', 'Don\'t compile before running this task'
+).setAction(async function sizeContracts(args, hre) {
   const config = hre.config.contractSizer;
 
   if (!args.noCompile) {
@@ -96,4 +96,4 @@ async function sizeContracts(args, hre) {
       console.log(colors.red(message));
     }
   }
-}
+});
