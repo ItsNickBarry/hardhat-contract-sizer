@@ -29,7 +29,7 @@ task(
       'hex'
     ).length;
 
-    if (!config.disambiguatePaths) {
+    if (config.flat) {
       fullName = fullName.split(':').pop();
     }
 

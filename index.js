@@ -7,7 +7,7 @@ extendConfig(function (config, userConfig) {
   config.contractSizer = Object.assign(
     {
       alphaSort: false,
-      disambiguatePaths: false,
+      flat: false,
       runOnCompile: false,
       strict: false,
       only: [],
