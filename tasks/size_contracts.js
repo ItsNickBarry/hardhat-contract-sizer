@@ -15,7 +15,7 @@ task(
     await hre.run('compile', { noSizeContracts: true });
   }
 
-  const contracts = [];
+  const outputData = [];
 
   const fullNames = await hre.artifacts.getAllFullyQualifiedNames();
 
@@ -33,13 +33,13 @@ task(
       fullName = fullName.split(':').pop();
     }
 
-    contracts.push({ name: fullName, size });
+    outputData.push({ name: fullName, size });
   }));
 
   if (config.alphaSort) {
-    contracts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
+    outputData.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
   } else {
-    contracts.sort((a, b) => a.size - b.size);
+    outputData.sort((a, b) => a.size - b.size);
   }
 
   const table = new Table({
@@ -65,22 +65,22 @@ task(
 
   let largeContracts = 0;
 
-  for (let contract of contracts) {
-    if (!contract.size) {
+  for (let item of outputData) {
+    if (!item.size) {
       continue;
     }
 
-    let size = (contract.size / 1000).toFixed(3);
+    let size = (item.size / 1000).toFixed(3);
 
-    if (contract.size > SIZE_LIMIT) {
+    if (item.size > SIZE_LIMIT) {
       size = colors.red.bold(size);
       largeContracts++;
-    } else if (contract.size > SIZE_LIMIT * 0.9) {
+    } else if (item.size > SIZE_LIMIT * 0.9) {
       size = colors.yellow.bold(size);
     }
 
     table.push([
-      { content: contract.name },
+      { content: item.name },
       { content: size, hAlign: 'right' },
     ]);
   }
