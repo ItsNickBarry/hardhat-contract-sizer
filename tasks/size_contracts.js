@@ -36,6 +36,15 @@ task(
     outputData.push({ name: fullName, size });
   }));
 
+  outputData.reduce(function (acc, { name }) {
+    if (acc.has(name)) {
+      throw new HardhatPluginError(`ambiguous contract name: ${ name }`);
+    }
+
+    acc.add(name);
+    return acc;
+  }, new Set());
+
   if (config.alphaSort) {
     outputData.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
   } else {
