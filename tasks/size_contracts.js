@@ -17,9 +17,11 @@ task(
 
   const contracts = [];
 
-  for (let fullName of await hre.artifacts.getAllFullyQualifiedNames()) {
-    if (config.only.length && !config.only.some(m => fullName.match(m))) continue;
-    if (config.except.length && config.except.some(m => fullName.match(m))) continue;
+  const fullNames = await hre.artifacts.getAllFullyQualifiedNames();
+
+  await Promise.all(fullNames.map(async function (fullName) {
+    if (config.only.length && !config.only.some(m => fullName.match(m))) return;
+    if (config.except.length && config.except.some(m => fullName.match(m))) return;
 
     const { deployedBytecode } = await hre.artifacts.readArtifact(fullName);
     const size = Buffer.from(
@@ -32,7 +34,7 @@ task(
     }
 
     contracts.push({ name: fullName, size });
-  }
+  }));
 
   if (config.alphaSort) {
     contracts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
