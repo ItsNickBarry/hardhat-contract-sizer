@@ -1,6 +1,9 @@
 const colors = require('colors/safe');
 const Table = require('cli-table3');
 const { HardhatPluginError } = require('hardhat/plugins');
+const {
+  TASK_COMPILE,
+} = require('hardhat/builtin-tasks/task-names');
 
 const SIZE_LIMIT = 24576;
 
@@ -9,11 +12,11 @@ task(
 ).addFlag(
   'noCompile', 'Don\'t compile before running this task'
 ).setAction(async function (args, hre) {
-  const config = hre.config.contractSizer;
-
   if (!args.noCompile) {
-    await hre.run('compile', { noSizeContracts: true });
+    await hre.run(TASK_COMPILE, { noSizeContracts: true });
   }
+
+  const config = hre.config.contractSizer;
 
   const outputData = [];
 
