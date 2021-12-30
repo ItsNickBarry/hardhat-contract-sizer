@@ -8,7 +8,7 @@ task(
   'size-contracts', 'Output the size of compiled contracts'
 ).addFlag(
   'noCompile', 'Don\'t compile before running this task'
-).setAction(async function sizeContracts(args, hre) {
+).setAction(async function (args, hre) {
   const config = hre.config.contractSizer;
 
   if (!args.noCompile) {
