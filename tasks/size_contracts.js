@@ -46,7 +46,7 @@ task(
   }
 
   const table = new Table({
-    head: [chalk.bold('Contract Name'), 'Size (KB)'],
+    head: [chalk.bold('Contract Name'), chalk.bold('Size (KB)')],
     style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
     chars: {
       mid: '·',
