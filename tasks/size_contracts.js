@@ -1,4 +1,4 @@
-const colors = require('colors/safe');
+const chalk = require('chalk');
 const Table = require('cli-table3');
 const { HardhatPluginError } = require('hardhat/plugins');
 const {
@@ -46,7 +46,7 @@ task(
   }
 
   const table = new Table({
-    head: [colors.bold('Contract Name'), 'Size (KB)'],
+    head: [chalk.bold('Contract Name'), 'Size (KB)'],
     style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
     chars: {
       mid: '·',
@@ -76,10 +76,10 @@ task(
     let size = (item.size / 1000).toFixed(3);
 
     if (item.size > SIZE_LIMIT) {
-      size = colors.red.bold(size);
+      size = chalk.red.bold(size);
       largeContracts++;
     } else if (item.size > SIZE_LIMIT * 0.9) {
-      size = colors.yellow.bold(size);
+      size = chalk.yellow.bold(size);
     }
 
     table.push([
@@ -98,7 +98,7 @@ task(
     if (config.strict) {
       throw new HardhatPluginError(message);
     } else {
-      console.log(colors.red(message));
+      console.log(chalk.red(message));
     }
   }
 });
