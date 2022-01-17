@@ -7,7 +7,7 @@ task(TASK_COMPILE).addFlag(
 ).setAction(async function (args, hre, runSuper) {
   await runSuper();
 
-  if (hre.config.contractSizer.runOnCompile && !args.noSizeContracts) {
+  if (hre.config.contractSizer.runOnCompile && !args.noSizeContracts && !hre.__SOLIDITY_COVERAGE_RUNNING) {
     // Disable compile to avoid an infinite loop
     await hre.run('size-contracts', { noCompile: true });
   }
