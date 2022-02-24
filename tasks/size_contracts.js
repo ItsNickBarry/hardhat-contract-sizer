@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const chalk = require('chalk');
 const Table = require('cli-table3');
 const { HardhatPluginError } = require('hardhat/plugins');
@@ -6,6 +8,10 @@ const {
 } = require('hardhat/builtin-tasks/task-names');
 
 const SIZE_LIMIT = 24576;
+
+const formatSize = function (size) {
+  return (size / 1000).toFixed(3);
+};
 
 task(
   'size-contracts', 'Output the size of compiled contracts'
@@ -22,6 +28,21 @@ task(
 
   const fullNames = await hre.artifacts.getAllFullyQualifiedNames();
 
+  const outputPath = path.resolve(
+    hre.config.paths.cache,
+    '.hardhat_contract_sizer_output.json'
+  );
+
+  const previousSizes = {};
+
+  if (fs.existsSync(outputPath)) {
+    const previousOutput = await fs.promises.readFile(outputPath);
+
+    JSON.parse(previousOutput).forEach(function (el) {
+      previousSizes[el.fullName] = el.size;
+    });
+  }
+
   await Promise.all(fullNames.map(async function (fullName) {
     if (config.only.length && !config.only.some(m => fullName.match(m))) return;
     if (config.except.length && config.except.some(m => fullName.match(m))) return;
@@ -32,21 +53,24 @@ task(
       'hex'
     ).length;
 
-    if (!config.disambiguatePaths) {
-      fullName = fullName.split(':').pop();
-    }
-
-    outputData.push({ name: fullName, size });
+    outputData.push({
+      fullName,
+      displayName: config.disambiguatePaths ? fullName : fullName.split(':').pop(),
+      size,
+      previousSize: previousSizes[fullName] || null,
+    });
   }));
 
   if (config.alphaSort) {
-    outputData.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
+    outputData.sort((a, b) => a.displayName.toUpperCase() > b.displayName.toUpperCase() ? 1 : -1);
   } else {
     outputData.sort((a, b) => a.size - b.size);
   }
 
+  await fs.promises.writeFile(outputPath, JSON.stringify(outputData), { flag: 'w' });
+
   const table = new Table({
-    head: [chalk.bold('Contract Name'), chalk.bold('Size (KB)')],
+    head: [chalk.bold('Contract Name'), chalk.bold('Size (KB)'), chalk.bold('Change (KB)')],
     style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
     chars: {
       mid: '·',
@@ -73,7 +97,7 @@ task(
       continue;
     }
 
-    let size = (item.size / 1000).toFixed(3);
+    let size = formatSize(item.size);
 
     if (item.size > SIZE_LIMIT) {
       size = chalk.red.bold(size);
@@ -82,9 +106,22 @@ task(
       size = chalk.yellow.bold(size);
     }
 
+
+    let diff;
+
+    if (item.size < item.previousSize) {
+      diff = chalk.green(formatSize(item.previousSize - item.size));
+
+    } else if (item.size > item.previousSize) {
+      diff = chalk.red(formatSize(item.size - item.previousSize));
+    } else {
+      diff = '';
+    }
+
     table.push([
-      { content: item.name },
+      { content: item.displayName },
       { content: size, hAlign: 'right' },
+      { content: diff, hAlign: 'right' },
     ]);
   }
 
