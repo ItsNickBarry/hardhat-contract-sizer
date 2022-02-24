@@ -9,6 +9,10 @@ const {
 
 const SIZE_LIMIT = 24576;
 
+const formatSize = function (size) {
+  return (size / 1000).toFixed(3);
+};
+
 task(
   'size-contracts', 'Output the size of compiled contracts'
 ).addFlag(
@@ -93,7 +97,7 @@ task(
       continue;
     }
 
-    let size = (item.size / 1000).toFixed(3);
+    let size = formatSize(item.size);
 
     if (item.size > SIZE_LIMIT) {
       size = chalk.red.bold(size);
@@ -106,10 +110,10 @@ task(
     let diff;
 
     if (item.size < item.previousSize) {
-      diff = chalk.green(((item.previousSize - item.size) / 1000).toFixed(3));
+      diff = chalk.green(formatSize(item.previousSize - item.size));
 
     } else if (item.size > item.previousSize) {
-      diff = chalk.red(((item.size - item.previousSize) / 1000).toFixed(3));
+      diff = chalk.red(formatSize(item.size - item.previousSize));
     } else {
       diff = '';
     }
