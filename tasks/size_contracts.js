@@ -53,7 +53,7 @@ task(
       fullName,
       displayName: config.disambiguatePaths ? fullName : fullName.split(':').pop(),
       size,
-      previousSize: previousSizes[fullName],
+      previousSize: previousSizes[fullName] || null,
     });
   }));
 
@@ -66,7 +66,7 @@ task(
   await fs.promises.writeFile(outputPath, JSON.stringify(outputData), { flag: 'w' });
 
   const table = new Table({
-    head: [chalk.bold('Contract Name'), chalk.bold('Size (KB)')],
+    head: [chalk.bold('Contract Name'), chalk.bold('Size (KB)'), chalk.bold('Change (KB)')],
     style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
     chars: {
       mid: '·',
@@ -102,9 +102,22 @@ task(
       size = chalk.yellow.bold(size);
     }
 
+
+    let diff;
+
+    if (item.size < item.previousSize) {
+      diff = chalk.green(`${ ((item.previousSize - item.size) / 1000).toFixed(3) }`);
+
+    } else if (item.size > item.previousSize) {
+      diff = chalk.red(`${ ((item.size - item.previousSize) / 1000).toFixed(3) }`);
+    } else {
+      diff = '';
+    }
+
     table.push([
       { content: item.displayName },
       { content: size, hAlign: 'right' },
+      { content: diff, hAlign: 'right' },
     ]);
   }
 
