@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const chalk = require('chalk');
 const Table = require('cli-table3');
 const { HardhatPluginError } = require('hardhat/plugins');
@@ -22,6 +24,21 @@ task(
 
   const fullNames = await hre.artifacts.getAllFullyQualifiedNames();
 
+  const outputPath = path.resolve(
+    hre.config.paths.cache,
+    '.hardhat_contract_sizer_output.json'
+  );
+
+  const previousSizes = {};
+
+  if (fs.existsSync(outputPath)) {
+    const previousOutput = await fs.promises.readFile(outputPath);
+
+    JSON.parse(previousOutput).forEach(function (el) {
+      previousSizes[el.fullName] = el.size;
+    });
+  }
+
   await Promise.all(fullNames.map(async function (fullName) {
     if (config.only.length && !config.only.some(m => fullName.match(m))) return;
     if (config.except.length && config.except.some(m => fullName.match(m))) return;
@@ -36,6 +53,7 @@ task(
       fullName,
       displayName: config.disambiguatePaths ? fullName : fullName.split(':').pop(),
       size,
+      previousSize: previousSizes[fullName],
     });
   }));
 
@@ -44,6 +62,8 @@ task(
   } else {
     outputData.sort((a, b) => a.size - b.size);
   }
+
+  await fs.promises.writeFile(outputPath, JSON.stringify(outputData), { flag: 'w' });
 
   const table = new Table({
     head: [chalk.bold('Contract Name'), chalk.bold('Size (KB)')],
