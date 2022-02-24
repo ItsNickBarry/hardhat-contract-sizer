@@ -32,15 +32,15 @@ task(
       'hex'
     ).length;
 
-    if (!config.disambiguatePaths) {
-      fullName = fullName.split(':').pop();
-    }
-
-    outputData.push({ name: fullName, size });
+    outputData.push({
+      fullName,
+      displayName: config.disambiguatePaths ? fullName : fullName.split(':').pop(),
+      size,
+    });
   }));
 
   if (config.alphaSort) {
-    outputData.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
+    outputData.sort((a, b) => a.displayName.toUpperCase() > b.displayName.toUpperCase() ? 1 : -1);
   } else {
     outputData.sort((a, b) => a.size - b.size);
   }
@@ -83,7 +83,7 @@ task(
     }
 
     table.push([
-      { content: item.name },
+      { content: item.displayName },
       { content: size, hAlign: 'right' },
     ]);
   }
