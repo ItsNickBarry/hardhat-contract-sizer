@@ -110,10 +110,9 @@ task(
     let diff;
 
     if (item.size < item.previousSize) {
-      diff = chalk.green(formatSize(item.previousSize - item.size));
-
+      diff = chalk.green(`-${ formatSize(item.previousSize - item.size) }`);
     } else if (item.size > item.previousSize) {
-      diff = chalk.red(formatSize(item.size - item.previousSize));
+      diff = chalk.red(`+${ formatSize(item.size - item.previousSize) }`);
     } else {
       diff = '';
     }
