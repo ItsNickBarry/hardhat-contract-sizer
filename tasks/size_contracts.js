@@ -1,23 +1,47 @@
-const colors = require('colors/safe');
+const fs = require('fs');
+const path = require('path');
+const chalk = require('chalk');
 const Table = require('cli-table3');
 const { HardhatPluginError } = require('hardhat/plugins');
+const {
+  TASK_COMPILE,
+} = require('hardhat/builtin-tasks/task-names');
 
 const SIZE_LIMIT = 24576;
+
+const formatSize = function (size) {
+  return (size / 1000).toFixed(3);
+};
 
 task(
   'size-contracts', 'Output the size of compiled contracts'
 ).addFlag(
   'noCompile', 'Don\'t compile before running this task'
-).setAction(async function sizeContracts(args, hre) {
-  const config = hre.config.contractSizer;
-
+).setAction(async function (args, hre) {
   if (!args.noCompile) {
-    await hre.run('compile', { noSizeContracts: true });
+    await hre.run(TASK_COMPILE, { noSizeContracts: true });
   }
+
+  const config = hre.config.contractSizer;
 
   const outputData = [];
 
   const fullNames = await hre.artifacts.getAllFullyQualifiedNames();
+
+  const outputPath = path.resolve(
+    hre.config.paths.cache,
+    '.hardhat_contract_sizer_output.json'
+  );
+
+  const previousSizes = {};
+
+  if (fs.existsSync(outputPath)) {
+    const previousOutput = await fs.promises.readFile(outputPath);
+
+    JSON.parse(previousOutput).forEach(function (el) {
+      previousSizes[el.fullName] = el.size;
+    });
+  }
 
   await Promise.all(fullNames.map(async function (fullName) {
     if (config.only.length && !config.only.some(m => fullName.match(m))) return;
@@ -29,11 +53,12 @@ task(
       'hex'
     ).length;
 
-    if (config.flat) {
-      fullName = fullName.split(':').pop();
-    }
-
-    outputData.push({ name: fullName, size });
+    outputData.push({
+      fullName,
+      displayName: config.flat ? fullName.split(':').pop() : fullName,
+      size,
+      previousSize: previousSizes[fullName] || null,
+    });
   }));
 
   outputData.reduce(function (acc, { name }) {
@@ -46,13 +71,15 @@ task(
   }, new Set());
 
   if (config.alphaSort) {
-    outputData.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
+    outputData.sort((a, b) => a.displayName.toUpperCase() > b.displayName.toUpperCase() ? 1 : -1);
   } else {
     outputData.sort((a, b) => a.size - b.size);
   }
 
+  await fs.promises.writeFile(outputPath, JSON.stringify(outputData), { flag: 'w' });
+
   const table = new Table({
-    head: [colors.bold('Contract Name'), 'Size (KB)'],
+    head: [chalk.bold('Contract Name'), chalk.bold('Size (KB)'), chalk.bold('Change (KB)')],
     style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
     chars: {
       mid: '·',
@@ -79,18 +106,30 @@ task(
       continue;
     }
 
-    let size = (item.size / 1000).toFixed(3);
+    let size = formatSize(item.size);
 
     if (item.size > SIZE_LIMIT) {
-      size = colors.red.bold(size);
+      size = chalk.red.bold(size);
       largeContracts++;
     } else if (item.size > SIZE_LIMIT * 0.9) {
-      size = colors.yellow.bold(size);
+      size = chalk.yellow.bold(size);
+    }
+
+
+    let diff;
+
+    if (item.size < item.previousSize) {
+      diff = chalk.green(`-${ formatSize(item.previousSize - item.size) }`);
+    } else if (item.size > item.previousSize) {
+      diff = chalk.red(`+${ formatSize(item.size - item.previousSize) }`);
+    } else {
+      diff = '';
     }
 
     table.push([
-      { content: item.name },
+      { content: item.displayName },
       { content: size, hAlign: 'right' },
+      { content: diff, hAlign: 'right' },
     ]);
   }
 
@@ -104,7 +143,7 @@ task(
     if (config.strict) {
       throw new HardhatPluginError(message);
     } else {
-      console.log(colors.red(message));
+      console.log(chalk.red(message));
     }
   }
 });

@@ -1,6 +1,6 @@
 {
   "name": "hardhat-contract-sizer",
-  "version": "2.3.0",
+  "version": "2.5.1",
   "license": "MIT",
   "description": "Output Solidity contract sizes with Hardhat",
   "keywords": [
@@ -23,11 +23,11 @@
     "hardhat": "^2.0.0"
   },
   "devDependencies": {
-    "hardhat": "^2.0.0",
-    "eslint": "^7.6.0"
+    "eslint": "^7.6.0",
+    "hardhat": "^2.0.0"
   },
   "dependencies": {
-    "cli-table3": "^0.6.0",
-    "colors": "^1.4.0"
+    "chalk": "^4.0.0",
+    "cli-table3": "^0.6.0"
   }
 }
