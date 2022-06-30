@@ -10,7 +10,7 @@ const {
 const SIZE_LIMIT = 24576;
 
 const formatSize = function (size) {
-  return (size / 1000).toFixed(3);
+  return (size / 1024).toFixed(3);
 };
 
 task(
@@ -79,7 +79,7 @@ task(
   await fs.promises.writeFile(outputPath, JSON.stringify(outputData), { flag: 'w' });
 
   const table = new Table({
-    head: [chalk.bold('Contract Name'), chalk.bold('Size (KB)'), chalk.bold('Change (KB)')],
+    head: [chalk.bold('Contract Name'), chalk.bold('Size (KiB)'), chalk.bold('Change (KiB)')],
     style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
     chars: {
       mid: '·',
@@ -115,15 +115,14 @@ task(
       size = chalk.yellow.bold(size);
     }
 
+    let diff = '';
 
-    let diff;
-
-    if (item.size < item.previousSize) {
-      diff = chalk.green(`-${ formatSize(item.previousSize - item.size) }`);
-    } else if (item.size > item.previousSize) {
-      diff = chalk.red(`+${ formatSize(item.size - item.previousSize) }`);
-    } else {
-      diff = '';
+    if (item.previousSize) {
+      if (item.size < item.previousSize) {
+        diff = chalk.green(`-${ formatSize(item.previousSize - item.size) }`);
+      } else if (item.size > item.previousSize) {
+        diff = chalk.red(`+${ formatSize(item.size - item.previousSize) }`);
+      }
     }
 
     table.push([
