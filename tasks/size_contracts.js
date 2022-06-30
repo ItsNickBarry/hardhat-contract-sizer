@@ -106,15 +106,14 @@ task(
       size = chalk.yellow.bold(size);
     }
 
+    let diff = '';
 
-    let diff;
-
-    if (item.size < item.previousSize) {
-      diff = chalk.green(`-${ formatSize(item.previousSize - item.size) }`);
-    } else if (item.size > item.previousSize) {
-      diff = chalk.red(`+${ formatSize(item.size - item.previousSize) }`);
-    } else {
-      diff = '';
+    if (item.previousSize) {
+      if (item.size < item.previousSize) {
+        diff = chalk.green(`-${ formatSize(item.previousSize - item.size) }`);
+      } else if (item.size > item.previousSize) {
+        diff = chalk.red(`+${ formatSize(item.size - item.previousSize) }`);
+      }
     }
 
     table.push([
