@@ -90,7 +90,7 @@ task(
     },
   });
 
-  let largeContracts = 0;
+  let oversizedContracts = 0;
 
   for (let item of outputData) {
     if (!item.size) {
@@ -101,7 +101,7 @@ task(
 
     if (item.size > SIZE_LIMIT) {
       size = chalk.red.bold(size);
-      largeContracts++;
+      oversizedContracts++;
     } else if (item.size > SIZE_LIMIT * 0.9) {
       size = chalk.yellow.bold(size);
     }
@@ -125,10 +125,10 @@ task(
 
   console.log(table.toString());
 
-  if (largeContracts > 0) {
+  if (oversizedContracts > 0) {
     console.log();
 
-    const message = `Warning: ${ largeContracts } contracts exceed the size limit for mainnet deployment.`;
+    const message = `Warning: ${ oversizedContracts } contracts exceed the size limit for mainnet deployment.`;
 
     if (config.strict) {
       throw new HardhatPluginError(message);
