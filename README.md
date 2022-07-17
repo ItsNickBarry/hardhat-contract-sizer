@@ -7,6 +7,8 @@ Output Solidity contract sizes with Hardhat.
 ## Installation
 
 ```bash
+npm install --save-dev hardhat-contract-sizer
+# or
 yarn add --dev hardhat-contract-sizer
 ```
 
@@ -42,11 +44,15 @@ contractSizer: {
 Run the included Hardhat task to output compiled contract sizes:
 
 ```bash
+npx hardhat size-contracts
+# or
 yarn run hardhat size-contracts
 ```
 
 By default, the hardhat `compile` task is run before sizing contracts.  This behavior can be disabled with the `--no-compile` flag:
 
 ```bash
+npx hardhat size-contracts --no-compile
+# or
 yarn run hardhat size-contracts --no-compile
 ```
