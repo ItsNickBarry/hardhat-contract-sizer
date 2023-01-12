@@ -138,6 +138,8 @@ task(
         diff = chalk.green(`-${ formatSize(item.previousSize - item.size) }`);
       } else if (item.size > item.previousSize) {
         diff = chalk.red(`+${ formatSize(item.size - item.previousSize) }`);
+      } else {
+        diff = chalk.yellow(formatSize(0));
       }
     }
 
