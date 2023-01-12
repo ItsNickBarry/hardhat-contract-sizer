@@ -2,14 +2,16 @@
 
 Output Solidity contract sizes with Hardhat.
 
+> Versions of this plugin prior to `3.0.0` were released as `hardhat-contract-sizer`, outside of the `@solidstate` namespace.
+
 > Versions of this plugin prior to `2.0.0` were released as `buidler-contract-sizer`.
 
 ## Installation
 
 ```bash
-npm install --save-dev hardhat-contract-sizer
+npm install --save-dev @solidstate/hardhat-contract-sizer
 # or
-yarn add --dev hardhat-contract-sizer
+yarn add --dev @solidstate/hardhat-contract-sizer
 ```
 
 ## Usage
@@ -17,7 +19,7 @@ yarn add --dev hardhat-contract-sizer
 Load plugin in Hardhat config:
 
 ```javascript
-require('hardhat-contract-sizer');
+require('@solidstate/hardhat-contract-sizer');
 ```
 
 Add configuration under the `contractSizer` key:
