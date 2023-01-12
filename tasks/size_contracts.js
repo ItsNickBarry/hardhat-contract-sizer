@@ -79,7 +79,6 @@ task(
   await fs.promises.writeFile(outputPath, JSON.stringify(outputData), { flag: 'w' });
 
   const table = new Table({
-    head: [chalk.bold('Contract Name'), chalk.bold('Size (KiB)'), chalk.bold('Change (KiB)')],
     style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
     chars: {
       mid: '·',
@@ -99,7 +98,33 @@ task(
     },
   });
 
-  let largeContracts = 0;
+  const compiler = hre.config.solidity.compilers[0];
+
+  table.push([
+    {
+      content: chalk.gray(`Solc version: ${ compiler.version }`),
+    },
+    {
+      content: chalk.gray(`Optimizer enabled: ${ compiler.settings.optimizer.enabled }`),
+    },
+    {
+      content: chalk.gray(`Runs: ${ compiler.settings.optimizer.runs }`),
+    },
+  ]);
+
+  table.push([
+    {
+      content: chalk.bold('Contract Name'),
+    },
+    {
+      content: chalk.bold('Size (KiB)'),
+    },
+    {
+      content: chalk.bold('Change (KiB)'),
+    },
+  ]);
+
+  let oversizedContracts = 0;
 
   for (let item of outputData) {
     if (!item.size) {
@@ -110,7 +135,7 @@ task(
 
     if (item.size > SIZE_LIMIT) {
       size = chalk.red.bold(size);
-      largeContracts++;
+      oversizedContracts++;
     } else if (item.size > SIZE_LIMIT * 0.9) {
       size = chalk.yellow.bold(size);
     }
@@ -122,6 +147,8 @@ task(
         diff = chalk.green(`-${ formatSize(item.previousSize - item.size) }`);
       } else if (item.size > item.previousSize) {
         diff = chalk.red(`+${ formatSize(item.size - item.previousSize) }`);
+      } else {
+        diff = chalk.yellow(formatSize(0));
       }
     }
 
@@ -134,10 +161,10 @@ task(
 
   console.log(table.toString());
 
-  if (largeContracts > 0) {
+  if (oversizedContracts > 0) {
     console.log();
 
-    const message = `Warning: ${ largeContracts } contracts exceed the size limit for mainnet deployment.`;
+    const message = `Warning: ${ oversizedContracts } contracts exceed the size limit for mainnet deployment (${ formatSize(SIZE_LIMIT)} KiB).`;
 
     if (config.strict) {
       throw new HardhatPluginError(message);

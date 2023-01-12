@@ -1,6 +1,6 @@
 {
-  "name": "hardhat-contract-sizer",
-  "version": "2.5.1",
+  "name": "@solidstate/hardhat-contract-sizer",
+  "version": "3.0.0",
   "license": "MIT",
   "description": "Output Solidity contract sizes with Hardhat",
   "keywords": [
@@ -15,7 +15,7 @@
     "wow",
     "bytecode"
   ],
-  "repository": "https://github.com/ItsNickBarry/hardhat-contract-sizer",
+  "repository": "github:solidstate-network/hardhat-contract-sizer",
   "author": "Nick Barry",
   "main": "index.js",
   "types": "index.d.ts",
@@ -29,5 +29,8 @@
   "dependencies": {
     "chalk": "^4.0.0",
     "cli-table3": "^0.6.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
