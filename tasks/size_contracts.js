@@ -153,7 +153,7 @@ task(
   if (oversizedContracts > 0) {
     console.log();
 
-    const message = `Warning: ${ oversizedContracts } contracts exceed the size limit for mainnet deployment.`;
+    const message = `Warning: ${ oversizedContracts } contracts exceed the size limit for mainnet deployment (${ formatSize(SIZE_LIMIT)} KiB).`;
 
     if (config.strict) {
       throw new HardhatPluginError(message);
