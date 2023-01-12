@@ -70,7 +70,6 @@ task(
   await fs.promises.writeFile(outputPath, JSON.stringify(outputData), { flag: 'w' });
 
   const table = new Table({
-    head: [chalk.bold('Contract Name'), chalk.bold('Size (KiB)'), chalk.bold('Change (KiB)')],
     style: { head: [], border: [], 'padding-left': 2, 'padding-right': 2 },
     chars: {
       mid: '·',
@@ -89,6 +88,32 @@ task(
       'bottom-mid': '|',
     },
   });
+
+  const compiler = hre.config.solidity.compilers[0];
+
+  table.push([
+    {
+      content: chalk.gray(`Solc version: ${ compiler.version }`),
+    },
+    {
+      content: chalk.gray(`Optimizer enabled: ${ compiler.settings.optimizer.enabled }`),
+    },
+    {
+      content: chalk.gray(`Runs: ${ compiler.settings.optimizer.runs }`),
+    },
+  ]);
+
+  table.push([
+    {
+      content: chalk.bold('Contract Name'),
+    },
+    {
+      content: chalk.bold('Size (KiB)'),
+    },
+    {
+      content: chalk.bold('Change (KiB)'),
+    },
+  ]);
 
   let oversizedContracts = 0;
 
