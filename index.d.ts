@@ -9,6 +9,7 @@ declare module 'hardhat/types/config' {
       strict?: boolean,
       only?: string[],
       except?: string[],
+      outputFile?: string,
     }
   }
 
@@ -20,6 +21,7 @@ declare module 'hardhat/types/config' {
       strict: boolean
       only: string[],
       except: string[],
+      outputFile: string
     }
   }
 }

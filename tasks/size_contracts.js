@@ -13,6 +13,23 @@ const formatSize = function (size) {
   return (size / 1024).toFixed(3);
 };
 
+const ansiRegex = function ({ onlyFirst = false } = {}) {
+  const pattern = [
+    '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
+    '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-nq-uy=><~]))'
+  ].join('|');
+
+  return new RegExp(pattern, onlyFirst ? undefined : 'g');
+}
+
+const stripAnsi = function (string) {
+  if (typeof string !== 'string') {
+    throw new TypeError(`Expected a \`string\`, got \`${typeof string}\``);
+  }
+
+  return string.replace(ansiRegex(), '');
+}
+
 task(
   'size-contracts', 'Output the size of compiled contracts'
 ).addFlag(
@@ -151,6 +168,8 @@ task(
   }
 
   console.log(table.toString());
+  if (config.outputFile)
+    fs.writeFileSync(config.outputFile, stripAnsi(table.toString()));
 
   if (oversizedContracts > 0) {
     console.log();
