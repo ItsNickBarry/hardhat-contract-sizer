@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
+const stripAnsi = require('strip-ansi');
 const Table = require('cli-table3');
 const { HardhatPluginError } = require('hardhat/plugins');
 const {
@@ -151,6 +152,8 @@ task(
   }
 
   console.log(table.toString());
+  if (config.outputFile)
+    fs.writeFileSync(config.outputFile, `${ stripAnsi(table.toString()) }\n`);
 
   if (oversizedContracts > 0) {
     console.log();

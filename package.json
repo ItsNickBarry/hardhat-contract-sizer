@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "chalk": "^4.0.0",
-    "cli-table3": "^0.6.0"
+    "cli-table3": "^0.6.0",
+    "strip-ansi": "^6.0.0"
   }
 }

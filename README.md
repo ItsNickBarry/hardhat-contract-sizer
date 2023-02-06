@@ -30,6 +30,7 @@ Add configuration under the `contractSizer` key:
 | `strict` | whether to throw an error if any contracts exceed the size limit (may cause compatibility issues with `solidity-coverage`) | `false` |
 | `only` | `Array` of `String` matchers used to select included contracts, defaults to all contracts if `length` is 0 | `[]` |
 | `except` | `Array` of `String` matchers used to exclude contracts | `[]` |
+| `outputFile` | file path to write contract size report | `null` |
 
 ```javascript
 contractSizer: {
