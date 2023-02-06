@@ -55,11 +55,20 @@ task(
 
     outputData.push({
       fullName,
-      displayName: config.disambiguatePaths ? fullName : fullName.split(':').pop(),
+      displayName: config.flat ? fullName.split(':').pop() : fullName,
       size,
       previousSize: previousSizes[fullName] || null,
     });
   }));
+
+  outputData.reduce(function (acc, { displayName }) {
+    if (acc.has(displayName)) {
+      throw new HardhatPluginError(`ambiguous contract name: ${ displayName }`);
+    }
+
+    acc.add(displayName);
+    return acc;
+  }, new Set());
 
   if (config.alphaSort) {
     outputData.sort((a, b) => a.displayName.toUpperCase() > b.displayName.toUpperCase() ? 1 : -1);
