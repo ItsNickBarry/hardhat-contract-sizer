@@ -153,7 +153,7 @@ task(
 
   console.log(table.toString());
   if (config.outputFile)
-    fs.writeFileSync(config.outputFile, stripAnsi(table.toString()));
+    fs.writeFileSync(config.outputFile, `${ stripAnsi(table.toString()) }\n`);
 
   if (oversizedContracts > 0) {
     console.log();
