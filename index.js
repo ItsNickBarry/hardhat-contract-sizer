@@ -12,6 +12,7 @@ extendConfig(function (config, userConfig) {
       strict: false,
       only: [],
       except: [],
+      outputFile: null,
     },
     userConfig.contractSizer
   );
