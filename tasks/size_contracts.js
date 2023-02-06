@@ -61,12 +61,12 @@ task(
     });
   }));
 
-  outputData.reduce(function (acc, { name }) {
-    if (acc.has(name)) {
-      throw new HardhatPluginError(`ambiguous contract name: ${ name }`);
+  outputData.reduce(function (acc, { displayName }) {
+    if (acc.has(displayName)) {
+      throw new HardhatPluginError(`ambiguous contract name: ${ displayName }`);
     }
 
-    acc.add(name);
+    acc.add(displayName);
     return acc;
   }, new Set());
 
