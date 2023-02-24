@@ -11,7 +11,7 @@ const {
 const SIZE_LIMIT = 24576;
 
 const formatSize = function (size) {
-  return (size / 1024).toFixed(3);
+  return (size / 1000).toFixed(3);
 };
 
 task(
@@ -109,10 +109,10 @@ task(
       content: chalk.bold('Contract Name'),
     },
     {
-      content: chalk.bold('Size (KiB)'),
+      content: chalk.bold('Size (Kb)'),
     },
     {
-      content: chalk.bold('Change (KiB)'),
+      content: chalk.bold('Change (Kb)'),
     },
   ]);
 
@@ -158,7 +158,7 @@ task(
   if (oversizedContracts > 0) {
     console.log();
 
-    const message = `Warning: ${ oversizedContracts } contracts exceed the size limit for mainnet deployment (${ formatSize(SIZE_LIMIT)} KiB).`;
+    const message = `Warning: ${ oversizedContracts } contracts exceed the size limit for mainnet deployment (${ formatSize(SIZE_LIMIT)} Kb).`;
 
     if (config.strict) {
       throw new HardhatPluginError(message);
