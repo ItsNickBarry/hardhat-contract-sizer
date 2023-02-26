@@ -6,6 +6,7 @@ const { HardhatPluginError } = require('hardhat/plugins');
 const {
   TASK_COMPILE,
 } = require('hardhat/builtin-tasks/task-names');
+const { parseFullyQualifiedName } = require('hardhat/utils/contract-names');
 
 const SIZE_LIMIT = 24576;
 
@@ -55,7 +56,7 @@ task(
 
     outputData.push({
       fullName,
-      displayName: config.flat ? fullName.split(':').pop() : fullName,
+      displayName: config.flat ? parseFullyQualifiedName(fullName).contractName : fullName,
       size,
       previousSize: previousSizes[fullName] || null,
     });
