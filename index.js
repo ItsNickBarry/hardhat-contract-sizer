@@ -13,6 +13,7 @@ extendConfig(function (config, userConfig) {
       only: [],
       except: [],
       outputFile: null,
+      unit: 'kib',
     },
     userConfig.contractSizer
   );

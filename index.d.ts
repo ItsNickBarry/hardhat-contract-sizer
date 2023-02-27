@@ -10,6 +10,7 @@ declare module 'hardhat/types/config' {
       only?: string[],
       except?: string[],
       outputFile?: string,
+      unit?: 'b' | 'kib' | 'kb',
     }
   }
 
@@ -21,7 +22,8 @@ declare module 'hardhat/types/config' {
       strict: boolean
       only: string[],
       except: string[],
-      outputFile: string
+      outputFile: string,
+      unit: 'b' | 'kib' | 'kb',
     }
   }
 }

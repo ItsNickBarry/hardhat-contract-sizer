@@ -8,12 +8,6 @@ const {
   TASK_COMPILE,
 } = require('hardhat/builtin-tasks/task-names');
 
-const SIZE_LIMIT = 24576;
-
-const formatSize = function (size) {
-  return (size / 1000).toFixed(3);
-};
-
 task(
   'size-contracts', 'Output the size of compiled contracts'
 ).addFlag(
@@ -24,6 +18,16 @@ task(
   }
 
   const config = hre.config.contractSizer;
+
+  const SIZE_LIMIT = 24576;
+  const UNITS = config.units == 'b' ? 'B' : config.units == 'kb' ? 'Kb' : 'KiB';
+
+  const formatSize = function (size) {
+    if (config.units == 'b') return size;
+    if (config.units == 'kib') return (size / 1024).toFixed(3);
+    if (config.units == 'kb') return (size / 1000).toFixed(3);
+    return (size / 1024).toFixed(3);
+  };
 
   const outputData = [];
 
@@ -94,13 +98,13 @@ task(
 
   table.push([
     {
-      content: chalk.gray(`Solc version: ${ compiler.version }`),
+      content: chalk.gray(`Solc version: ${compiler.version}`),
     },
     {
-      content: chalk.gray(`Optimizer enabled: ${ compiler.settings.optimizer.enabled }`),
+      content: chalk.gray(`Optimizer enabled: ${compiler.settings.optimizer.enabled}`),
     },
     {
-      content: chalk.gray(`Runs: ${ compiler.settings.optimizer.runs }`),
+      content: chalk.gray(`Runs: ${compiler.settings.optimizer.runs}`),
     },
   ]);
 
@@ -109,10 +113,10 @@ task(
       content: chalk.bold('Contract Name'),
     },
     {
-      content: chalk.bold('Size (Kb)'),
+      content: chalk.bold(`Size (${UNITS})`),
     },
     {
-      content: chalk.bold('Change (Kb)'),
+      content: chalk.bold(`Change (${UNITS})`),
     },
   ]);
 
@@ -136,9 +140,9 @@ task(
 
     if (item.previousSize) {
       if (item.size < item.previousSize) {
-        diff = chalk.green(`-${ formatSize(item.previousSize - item.size) }`);
+        diff = chalk.green(`-${formatSize(item.previousSize - item.size)}`);
       } else if (item.size > item.previousSize) {
-        diff = chalk.red(`+${ formatSize(item.size - item.previousSize) }`);
+        diff = chalk.red(`+${formatSize(item.size - item.previousSize)}`);
       } else {
         diff = chalk.yellow(formatSize(0));
       }
@@ -153,12 +157,12 @@ task(
 
   console.log(table.toString());
   if (config.outputFile)
-    fs.writeFileSync(config.outputFile, `${ stripAnsi(table.toString()) }\n`);
+    fs.writeFileSync(config.outputFile, `${stripAnsi(table.toString())}\n`);
 
   if (oversizedContracts > 0) {
     console.log();
 
-    const message = `Warning: ${ oversizedContracts } contracts exceed the size limit for mainnet deployment (${ formatSize(SIZE_LIMIT)} Kb).`;
+    const message = `Warning: ${oversizedContracts} contracts exceed the size limit for mainnet deployment (${formatSize(SIZE_LIMIT)} ${UNITS}).`;
 
     if (config.strict) {
       throw new HardhatPluginError(message);
