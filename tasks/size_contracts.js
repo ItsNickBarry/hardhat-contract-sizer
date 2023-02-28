@@ -20,12 +20,11 @@ task(
   const config = hre.config.contractSizer;
 
   const SIZE_LIMIT = 24576;
-  const UNITS = config.units == 'b' ? 'B' : config.units == 'kb' ? 'Kb' : 'KiB';
+  const UNIT = config.unit.toLowerCase() === 'b' ? 'B' : config.unit.toLowerCase() === 'kb' ? 'kB' : 'KiB';
 
   const formatSize = function (size) {
-    if (config.units == 'b') return size;
-    if (config.units == 'kib') return (size / 1024).toFixed(3);
-    if (config.units == 'kb') return (size / 1000).toFixed(3);
+    if (config.unit.toLowerCase() == 'b') return size;
+    if (config.unit.toLowerCase() == 'kb') return (size / 1000).toFixed(3);
     return (size / 1024).toFixed(3);
   };
 
@@ -113,10 +112,10 @@ task(
       content: chalk.bold('Contract Name'),
     },
     {
-      content: chalk.bold(`Size (${UNITS})`),
+      content: chalk.bold(`Size (${UNIT})`),
     },
     {
-      content: chalk.bold(`Change (${UNITS})`),
+      content: chalk.bold(`Change (${UNIT})`),
     },
   ]);
 
@@ -162,7 +161,7 @@ task(
   if (oversizedContracts > 0) {
     console.log();
 
-    const message = `Warning: ${oversizedContracts} contracts exceed the size limit for mainnet deployment (${formatSize(SIZE_LIMIT)} ${UNITS}).`;
+    const message = `Warning: ${oversizedContracts} contracts exceed the size limit for mainnet deployment (${formatSize(SIZE_LIMIT)} ${UNIT}).`;
 
     if (config.strict) {
       throw new HardhatPluginError(message);

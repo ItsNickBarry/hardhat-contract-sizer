@@ -22,17 +22,16 @@ require("hardhat-contract-sizer");
 
 Add configuration under the `contractSizer` key:
 
-| option              | description                                                                                                                  | default |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------- |
-| `alphaSort`         | whether to sort results table alphabetically (default sort is by contract size)                                              | `false` |
-| `runOnCompile`      | whether to output contract sizes automatically after compilation                                                             | `false` |
-| `disambiguatePaths` | whether to output the full path to the compilation artifact (relative to the Hardhat root directory)                         | `false` |
-| `strict`            | whether to throw an error if any contracts exceed the size limit (may cause compatibility issues with `solidity-coverage`)   | `false` |
-| `only`              | `Array` of `String` matchers used to select included contracts, defaults to all contracts if `length` is 0                   | `[]`    |
-| `except`            | `Array` of `String` matchers used to exclude contracts                                                                       | `[]`    |
-| `outputFile`        | file path to write contract size report                                                                                      | `null`  |
-| `unit`              | unit of measurement for the size of contracts, which can be expressed in 'b' (bytes), 'kib' (kibibytes), or 'kb' (kilobytes) | `kib`   |
-
+| option              | description                                                                                                                 | default |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `alphaSort`         | whether to sort results table alphabetically (default sort is by contract size)                                             | `false` |
+| `runOnCompile`      | whether to output contract sizes automatically after compilation                                                            | `false` |
+| `disambiguatePaths` | whether to output the full path to the compilation artifact (relative to the Hardhat root directory)                        | `false` |
+| `strict`            | whether to throw an error if any contracts exceed the size limit (may cause compatibility issues with `solidity-coverage`)  | `false` |
+| `only`              | `Array` of `String` matchers used to select included contracts, defaults to all contracts if `length` is 0                  | `[]`    |
+| `except`            | `Array` of `String` matchers used to exclude contracts                                                                      | `[]`    |
+| `outputFile`        | file path to write contract size report                                                                                     | `null`  |
+| `unit`              | unit of measurement for the size of contracts, which can be expressed in 'B' (bytes), 'kB' (kilobytes) or 'KiB' (kibibytes) | `KiB`   |
 
 ```javascript
 contractSizer: {
