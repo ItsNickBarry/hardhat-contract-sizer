@@ -19,13 +19,16 @@ task(
 
   const config = hre.config.contractSizer;
 
+  // TODO: avoid hardcoding unit names
+  if (!['B', 'kB', 'KiB'].includes(config.unit)) {
+    throw new HardhatPluginError(`Invalid unit: ${ config.unit }`);
+  }
+
   const SIZE_LIMIT = 24576;
-  const UNIT = config.unit.toLowerCase() === 'b' ? 'B' : config.unit.toLowerCase() === 'kb' ? 'kB' : 'KiB';
 
   const formatSize = function (size) {
-    if (config.unit.toLowerCase() == 'b') return size;
-    if (config.unit.toLowerCase() == 'kb') return (size / 1000).toFixed(3);
-    return (size / 1024).toFixed(3);
+    const divisor = { 'B': 1, 'kB': 1000, 'KiB': 1024 }[config.unit];
+    return (size / divisor).toFixed(3);
   };
 
   const outputData = [];
@@ -112,10 +115,10 @@ task(
       content: chalk.bold('Contract Name'),
     },
     {
-      content: chalk.bold(`Size (${UNIT})`),
+      content: chalk.bold(`Size (${config.unit})`),
     },
     {
-      content: chalk.bold(`Change (${UNIT})`),
+      content: chalk.bold(`Change (${config.unit})`),
     },
   ]);
 
@@ -161,7 +164,7 @@ task(
   if (oversizedContracts > 0) {
     console.log();
 
-    const message = `Warning: ${oversizedContracts} contracts exceed the size limit for mainnet deployment (${formatSize(SIZE_LIMIT)} ${UNIT}).`;
+    const message = `Warning: ${oversizedContracts} contracts exceed the size limit for mainnet deployment (${formatSize(SIZE_LIMIT)} ${config.unit}).`;
 
     if (config.strict) {
       throw new HardhatPluginError(message);
