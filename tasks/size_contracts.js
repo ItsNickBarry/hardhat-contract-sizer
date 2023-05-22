@@ -19,6 +19,11 @@ task(
 
   const config = hre.config.contractSizer;
 
+  // TODO: avoid hardcoding unit names
+  if (!['B', 'kB', 'KiB'].includes(config.unit)) {
+    throw new HardhatPluginError(`Invalid unit: ${ config.unit }`);
+  }
+
   const SIZE_LIMIT = 24576;
 
   const formatSize = function (size) {
