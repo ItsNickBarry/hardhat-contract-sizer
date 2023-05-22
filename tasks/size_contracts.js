@@ -8,6 +8,9 @@ const {
   TASK_COMPILE,
 } = require('hardhat/builtin-tasks/task-names');
 
+const SIZE_LIMIT = 24576;
+const UNITS = { 'B': 1, 'kB': 1000, 'KiB': 1024 };
+
 task(
   'size-contracts', 'Output the size of compiled contracts'
 ).addFlag(
@@ -19,15 +22,12 @@ task(
 
   const config = hre.config.contractSizer;
 
-  // TODO: avoid hardcoding unit names
-  if (!['B', 'kB', 'KiB'].includes(config.unit)) {
+  if (!UNITS[config.unit]) {
     throw new HardhatPluginError(`Invalid unit: ${ config.unit }`);
   }
 
-  const SIZE_LIMIT = 24576;
-
   const formatSize = function (size) {
-    const divisor = { 'B': 1, 'kB': 1000, 'KiB': 1024 }[config.unit];
+    const divisor = UNITS[config.unit];
     return (size / divisor).toFixed(3);
   };
 
