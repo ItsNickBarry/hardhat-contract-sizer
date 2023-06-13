@@ -8,7 +8,8 @@ const {
   TASK_COMPILE,
 } = require('hardhat/builtin-tasks/task-names');
 
-const SIZE_LIMIT = 24576;
+const DEPLOYED_SIZE_LIMIT = 24576;
+const INIT_SIZE_LIMIT = 49152;
 const UNITS = { 'B': 1, 'kB': 1000, 'KiB': 1024 };
 
 task(
@@ -41,12 +42,14 @@ task(
   );
 
   const previousSizes = {};
+  const previousInitSizes = {};
 
   if (fs.existsSync(outputPath)) {
     const previousOutput = await fs.promises.readFile(outputPath);
 
     JSON.parse(previousOutput).forEach(function (el) {
-      previousSizes[el.fullName] = el.size;
+      previousSizes[el.fullName] = el.deploySize;
+      previousInitSizes[el.fullName] = el.initSize;
     });
   }
 
@@ -54,24 +57,30 @@ task(
     if (config.only.length && !config.only.some(m => fullName.match(m))) return;
     if (config.except.length && config.except.some(m => fullName.match(m))) return;
 
-    const { deployedBytecode } = await hre.artifacts.readArtifact(fullName);
-    const size = Buffer.from(
+    const { deployedBytecode, bytecode } = await hre.artifacts.readArtifact(fullName);
+    const deploySize = Buffer.from(
       deployedBytecode.replace(/__\$\w*\$__/g, '0'.repeat(40)).slice(2),
+      'hex'
+    ).length;
+    const initSize = Buffer.from(
+      bytecode.replace(/__\$\w*\$__/g, '0'.repeat(40)).slice(2),
       'hex'
     ).length;
 
     outputData.push({
       fullName,
       displayName: config.disambiguatePaths ? fullName : fullName.split(':').pop(),
-      size,
-      previousSize: previousSizes[fullName] || null,
+      deploySize,
+      previousDeploySize: previousSizes[fullName] || null,
+      initSize,
+      previousInitSize: previousInitSizes[fullName] || null,
     });
   }));
 
   if (config.alphaSort) {
     outputData.sort((a, b) => a.displayName.toUpperCase() > b.displayName.toUpperCase() ? 1 : -1);
   } else {
-    outputData.sort((a, b) => a.size - b.size);
+    outputData.sort((a, b) => a.deploySize - b.deploySize);
   }
 
   await fs.promises.writeFile(outputPath, JSON.stringify(outputData), { flag: 'w' });
@@ -115,45 +124,74 @@ task(
       content: chalk.bold('Contract Name'),
     },
     {
-      content: chalk.bold(`Size (${config.unit})`),
+      content: chalk.bold(`Deploy Size (${config.unit})`),
     },
     {
       content: chalk.bold(`Change (${config.unit})`),
+    },
+    {
+      content: chalk.bold(`Init Size (${config.unit})`),
+    },
+    {
+      content: chalk.bold(`Init Change (${config.unit})`),
     },
   ]);
 
   let oversizedContracts = 0;
 
   for (let item of outputData) {
-    if (!item.size) {
+    if (item.deploySize === 0 && item.initSize === 0) {
       continue;
     }
 
-    let size = formatSize(item.size);
+    let deploySize = formatSize(item.deploySize);
+    let initSize = formatSize(item.initSize);
 
-    if (item.size > SIZE_LIMIT) {
-      size = chalk.red.bold(size);
+    if (item.deploySize > DEPLOYED_SIZE_LIMIT || item.initSize > INIT_SIZE_LIMIT) {
       oversizedContracts++;
-    } else if (item.size > SIZE_LIMIT * 0.9) {
-      size = chalk.yellow.bold(size);
     }
 
-    let diff = '';
+    if (item.deploySize > DEPLOYED_SIZE_LIMIT) {
+      deploySize = chalk.red.bold(deploySize);
+    } else if (item.deploySize > DEPLOYED_SIZE_LIMIT * 0.9) {
+      deploySize = chalk.yellow.bold(deploySize);
+    }
 
-    if (item.previousSize) {
-      if (item.size < item.previousSize) {
-        diff = chalk.green(`-${formatSize(item.previousSize - item.size)}`);
-      } else if (item.size > item.previousSize) {
-        diff = chalk.red(`+${formatSize(item.size - item.previousSize)}`);
+    if (item.initSize > INIT_SIZE_LIMIT) {
+      initSize = chalk.red.bold(initSize);
+    } else if (item.initSize > INIT_SIZE_LIMIT * 0.9) {
+      initSize = chalk.yellow.bold(initSize);
+    }
+
+    let deployDiff = '';
+    let initDiff = '';
+
+    if (item.previousDeploySize) {
+      if (item.deploySize < item.previousDeploySize) {
+        deployDiff = chalk.green(`-${formatSize(item.previousDeploySize - item.deploySize)}`);
+      } else if (item.deploySize > item.previousDeploySize) {
+        deployDiff = chalk.red(`+${formatSize(item.deploySize - item.previousDeploySize)}`);
       } else {
-        diff = chalk.yellow(formatSize(0));
+        deployDiff = chalk.yellow(formatSize(0));
+      }
+    }
+
+    if (item.previousInitSize) {
+      if (item.initSize < item.previousInitSize) {
+        initDiff = chalk.green(`-${formatSize(item.previousInitSize - item.initSize)}`);
+      } else if (item.initSize > item.previousInitSize) {
+        initDiff = chalk.red(`+${formatSize(item.initSize - item.previousInitSize)}`);
+      } else {
+        initDiff = chalk.yellow(formatSize(0));
       }
     }
 
     table.push([
       { content: item.displayName },
-      { content: size, hAlign: 'right' },
-      { content: diff, hAlign: 'right' },
+      { content: deploySize, hAlign: 'right' },
+      { content: deployDiff, hAlign: 'right' },
+      { content: initSize, hAlign: 'right' },
+      { content: initDiff, hAlign: 'right' },
     ]);
   }
 
@@ -164,7 +202,7 @@ task(
   if (oversizedContracts > 0) {
     console.log();
 
-    const message = `Warning: ${oversizedContracts} contracts exceed the size limit for mainnet deployment (${formatSize(SIZE_LIMIT)} ${config.unit}).`;
+    const message = `Warning: ${oversizedContracts} contracts exceed the size limit for mainnet deployment (${formatSize(DEPLOYED_SIZE_LIMIT)} ${config.unit} deployed, ${formatSize(INIT_SIZE_LIMIT)} ${config.unit} init).`;
 
     if (config.strict) {
       throw new HardhatPluginError(message);
