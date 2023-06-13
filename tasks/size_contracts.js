@@ -166,7 +166,7 @@ task(
       } else if (item.deploySize > item.previousDeploySize) {
         deployDiff = chalk.red(`+${formatSize(item.deploySize - item.previousDeploySize)}`);
       } else {
-        deployDiff = chalk.yellow(formatSize(0));
+        deployDiff = chalk.gray(formatSize(0));
       }
     }
 
@@ -176,7 +176,7 @@ task(
       } else if (item.initSize > item.previousInitSize) {
         initDiff = chalk.red(`+${formatSize(item.initSize - item.previousInitSize)}`);
       } else {
-        initDiff = chalk.yellow(formatSize(0));
+        initDiff = chalk.gray(formatSize(0));
       }
     }
 
