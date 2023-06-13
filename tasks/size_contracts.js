@@ -8,8 +8,12 @@ const {
   TASK_COMPILE,
 } = require('hardhat/builtin-tasks/task-names');
 
+// see EIPs 170 and 3860 for more information
+// https://eips.ethereum.org/EIPS/eip-170
+// https://eips.ethereum.org/EIPS/eip-3860
 const DEPLOYED_SIZE_LIMIT = 24576;
 const INIT_SIZE_LIMIT = 49152;
+
 const UNITS = { 'B': 1, 'kB': 1000, 'KiB': 1024 };
 
 task(
@@ -124,16 +128,10 @@ task(
       content: chalk.bold('Contract Name'),
     },
     {
-      content: chalk.bold(`Deploy Size (${config.unit})`),
+      content: chalk.bold(`Deployed size (${config.unit}) (change)`),
     },
     {
-      content: chalk.bold(`Change (${config.unit})`),
-    },
-    {
-      content: chalk.bold(`Init Size (${config.unit})`),
-    },
-    {
-      content: chalk.bold(`Init Change (${config.unit})`),
+      content: chalk.bold(`Initcode size (${config.unit}) (change)`),
     },
   ]);
 
@@ -172,7 +170,7 @@ task(
       } else if (item.deploySize > item.previousDeploySize) {
         deployDiff = chalk.red(`+${formatSize(item.deploySize - item.previousDeploySize)}`);
       } else {
-        deployDiff = chalk.yellow(formatSize(0));
+        deployDiff = chalk.gray(formatSize(0));
       }
     }
 
@@ -182,16 +180,14 @@ task(
       } else if (item.initSize > item.previousInitSize) {
         initDiff = chalk.red(`+${formatSize(item.initSize - item.previousInitSize)}`);
       } else {
-        initDiff = chalk.yellow(formatSize(0));
+        initDiff = chalk.gray(formatSize(0));
       }
     }
 
     table.push([
       { content: item.displayName },
-      { content: deploySize, hAlign: 'right' },
-      { content: deployDiff, hAlign: 'right' },
-      { content: initSize, hAlign: 'right' },
-      { content: initDiff, hAlign: 'right' },
+      { content: `${deploySize} (${deployDiff})`, hAlign: 'right' },
+      { content: `${initSize} (${initDiff})`, hAlign: 'right' },
     ]);
   }
 
