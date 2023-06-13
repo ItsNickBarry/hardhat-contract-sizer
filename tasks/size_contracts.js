@@ -124,16 +124,10 @@ task(
       content: chalk.bold('Contract Name'),
     },
     {
-      content: chalk.bold(`Deploy Size (${config.unit})`),
+      content: chalk.bold(`Deployed size (${config.unit}) (change)`),
     },
     {
-      content: chalk.bold(`Change (${config.unit})`),
-    },
-    {
-      content: chalk.bold(`Init Size (${config.unit})`),
-    },
-    {
-      content: chalk.bold(`Init Change (${config.unit})`),
+      content: chalk.bold(`Initcode size (${config.unit}) (change)`),
     },
   ]);
 
@@ -188,10 +182,8 @@ task(
 
     table.push([
       { content: item.displayName },
-      { content: deploySize, hAlign: 'right' },
-      { content: deployDiff, hAlign: 'right' },
-      { content: initSize, hAlign: 'right' },
-      { content: initDiff, hAlign: 'right' },
+      { content: `${deploySize} (${deployDiff})`, hAlign: 'right' },
+      { content: `${initSize} (${initDiff})`, hAlign: 'right' },
     ]);
   }
 
