@@ -84,10 +84,11 @@ task(
   if (config.alphaSort) {
     outputData.sort((a, b) => {
       if (a.displayName.toUpperCase() > b.displayName.toUpperCase())
-        return true
+        return 1
       else if (a.displayName.toUpperCase() < b.displayName.toUpperCase())
-        return false;
-      return a.deploySize == b.deploySize ? a.initSize > b.initSize : a.deploySize > b.deploySize;
+        return -1;
+
+      return a.deploySize == b.deploySize ? a.initSize - b.initSize : a.deploySize - b.deploySize;
     });
   } else {
     outputData.sort((a, b) => a.deploySize - b.deploySize);
