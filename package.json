@@ -1,5 +1,5 @@
 {
-  "name": "hardhat-contract-sizer",
+  "name": "@bahuy3103/hardhat-contract-sizer",
   "version": "2.10.0",
   "license": "MIT",
   "description": "Output Solidity contract sizes with Hardhat",
@@ -15,7 +15,10 @@
     "wow",
     "bytecode"
   ],
-  "repository": "https://github.com/ItsNickBarry/hardhat-contract-sizer",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huyhuynh3103/hardhat-contract-sizer.git"
+  },
   "author": "Nick Barry",
   "main": "index.js",
   "types": "index.d.ts",
@@ -30,5 +33,12 @@
     "chalk": "^4.0.0",
     "cli-table3": "^0.6.0",
     "strip-ansi": "^6.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/huyhuynh3103/hardhat-contract-sizer/issues"
+  },
+  "homepage": "https://github.com/huyhuynh3103/hardhat-contract-sizer#readme",
+  "scripts": {
+    "test": "mocha"
   }
 }

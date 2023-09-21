@@ -28,7 +28,7 @@ task(
   const config = hre.config.contractSizer;
 
   if (!UNITS[config.unit]) {
-    throw new HardhatPluginError(`Invalid unit: ${ config.unit }`);
+    throw new HardhatPluginError(`Invalid unit: ${config.unit}`);
   }
 
   const formatSize = function (size) {
@@ -82,7 +82,13 @@ task(
   }));
 
   if (config.alphaSort) {
-    outputData.sort((a, b) => a.displayName.toUpperCase() > b.displayName.toUpperCase() ? 1 : -1);
+    outputData.sort((a, b) => {
+      if (a.displayName.toUpperCase() > b.displayName.toUpperCase())
+        return true
+      else if (a.displayName.toUpperCase() < b.displayName.toUpperCase())
+        return false;
+      return a.deploySize == b.deploySize ? a.initSize > b.initSize : a.deploySize > b.deploySize;
+    });
   } else {
     outputData.sort((a, b) => a.deploySize - b.deploySize);
   }
