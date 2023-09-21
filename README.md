@@ -9,7 +9,7 @@ Output Solidity contract sizes with Hardhat.
 ```bash
 npm install --save-dev hardhat-contract-sizer
 # or
-yarn add --dev @bahuy3103/hardhat-contract-sizer
+yarn add --dev hardhat-contract-sizer
 ```
 
 ## Usage
@@ -17,7 +17,7 @@ yarn add --dev @bahuy3103/hardhat-contract-sizer
 Load plugin in Hardhat config:
 
 ```javascript
-require("@bahuy3103/hardhat-contract-sizer");
+require("hardhat-contract-sizer");
 ```
 
 Add configuration under the `contractSizer` key:
