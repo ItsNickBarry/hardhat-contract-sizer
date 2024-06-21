@@ -58,3 +58,17 @@ npx hardhat size-contracts --no-compile
 # or
 yarn run hardhat size-contracts --no-compile
 ```
+
+## Development
+
+Install dependencies via Yarn:
+
+```bash
+yarn install
+```
+
+Setup Husky to format code on commit:
+
+```bash
+yarn prepare
+```
