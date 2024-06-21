@@ -1,10 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const chalk = require('chalk');
-const stripAnsi = require('strip-ansi');
-const Table = require('cli-table3');
-const { HardhatPluginError } = require('hardhat/plugins');
-const { TASK_COMPILE } = require('hardhat/builtin-tasks/task-names');
+import { name as pluginName } from '../../package.json';
+import chalk from 'chalk';
+import Table from 'cli-table3';
+import fs from 'fs';
+import { TASK_COMPILE } from 'hardhat/builtin-tasks/task-names';
+import { task } from 'hardhat/config';
+import { HardhatPluginError } from 'hardhat/plugins';
+import path from 'path';
+import stripAnsi from 'strip-ansi';
 
 // see EIPs 170 and 3860 for more information
 // https://eips.ethereum.org/EIPS/eip-170
@@ -24,15 +26,22 @@ task('size-contracts', 'Output the size of compiled contracts')
     const config = hre.config.contractSizer;
 
     if (!UNITS[config.unit]) {
-      throw new HardhatPluginError(`Invalid unit: ${config.unit}`);
+      throw new HardhatPluginError(pluginName, `Invalid unit: ${config.unit}`);
     }
 
-    const formatSize = function (size) {
+    const formatSize = function (size: number) {
       const divisor = UNITS[config.unit];
       return (size / divisor).toFixed(3);
     };
 
-    const outputData = [];
+    const outputData: {
+      fullName: string;
+      displayName: string;
+      deploySize: number;
+      previousDeploySize?: number;
+      initSize: number;
+      previousInitSize?: number;
+    }[] = [];
 
     const fullNames = await hre.artifacts.getAllFullyQualifiedNames();
 
@@ -41,13 +50,17 @@ task('size-contracts', 'Output the size of compiled contracts')
       '.hardhat_contract_sizer_output.json',
     );
 
-    const previousSizes = {};
-    const previousInitSizes = {};
+    const previousSizes: { [fullName: string]: number } = {};
+    const previousInitSizes: { [fullName: string]: number } = {};
 
     if (fs.existsSync(outputPath)) {
-      const previousOutput = await fs.promises.readFile(outputPath);
+      const previousOutput: {
+        fullName: string;
+        deploySize: number;
+        initSize: number;
+      }[] = JSON.parse((await fs.promises.readFile(outputPath)).toString());
 
-      JSON.parse(previousOutput).forEach(function (el) {
+      previousOutput.forEach(function (el) {
         previousSizes[el.fullName] = el.deploySize;
         previousInitSizes[el.fullName] = el.initSize;
       });
@@ -78,11 +91,11 @@ task('size-contracts', 'Output the size of compiled contracts')
           fullName,
           displayName: config.disambiguatePaths
             ? fullName
-            : fullName.split(':').pop(),
+            : fullName.split(':').pop() ?? '',
           deploySize,
-          previousDeploySize: previousSizes[fullName] || null,
+          previousDeploySize: previousSizes[fullName],
           initSize,
-          previousInitSize: previousInitSizes[fullName] || null,
+          previousInitSize: previousInitSizes[fullName],
         });
       }),
     );
@@ -224,7 +237,7 @@ task('size-contracts', 'Output the size of compiled contracts')
       const message = `Warning: ${oversizedContracts} contracts exceed the size limit for mainnet deployment (${formatSize(DEPLOYED_SIZE_LIMIT)} ${config.unit} deployed, ${formatSize(INIT_SIZE_LIMIT)} ${config.unit} init).`;
 
       if (config.strict) {
-        throw new HardhatPluginError(message);
+        throw new HardhatPluginError(pluginName, message);
       } else {
         console.log(chalk.red(message));
       }

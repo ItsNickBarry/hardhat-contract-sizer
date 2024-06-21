@@ -1,4 +1,5 @@
-const { TASK_COMPILE } = require('hardhat/builtin-tasks/task-names');
+import { TASK_COMPILE } from 'hardhat/builtin-tasks/task-names';
+import { task } from 'hardhat/config';
 
 task(TASK_COMPILE)
   .addFlag(
@@ -11,7 +12,7 @@ task(TASK_COMPILE)
     if (
       hre.config.contractSizer.runOnCompile &&
       !args.noSizeContracts &&
-      !hre.__SOLIDITY_COVERAGE_RUNNING
+      !(hre as any).__SOLIDITY_COVERAGE_RUNNING
     ) {
       // Disable compile to avoid an infinite loop
       await hre.run('size-contracts', { noCompile: true });
