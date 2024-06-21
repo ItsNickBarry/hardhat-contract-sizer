@@ -15,6 +15,6 @@ extendConfig(function (config, userConfig) {
       outputFile: null,
       unit: 'KiB',
     },
-    userConfig.contractSizer
+    userConfig.contractSizer,
   );
 });

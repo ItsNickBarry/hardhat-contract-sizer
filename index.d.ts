@@ -1,6 +1,6 @@
-import "hardhat/types/config";
+import 'hardhat/types/config';
 
-declare module "hardhat/types/config" {
+declare module 'hardhat/types/config' {
   interface HardhatUserConfig {
     contractSizer?: {
       alphaSort?: boolean;

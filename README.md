@@ -17,7 +17,7 @@ yarn add --dev hardhat-contract-sizer
 Load plugin in Hardhat config:
 
 ```javascript
-require("hardhat-contract-sizer");
+require('hardhat-contract-sizer');
 ```
 
 Add configuration under the `contractSizer` key:
@@ -57,4 +57,18 @@ By default, the hardhat `compile` task is run before sizing contracts. This beha
 npx hardhat size-contracts --no-compile
 # or
 yarn run hardhat size-contracts --no-compile
+```
+
+## Development
+
+Install dependencies via Yarn:
+
+```bash
+yarn install
+```
+
+Setup Husky to format code on commit:
+
+```bash
+yarn prepare
 ```
