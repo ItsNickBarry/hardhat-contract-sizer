@@ -1,3 +1,6 @@
+import './tasks/compile';
+import './tasks/size_contracts';
+import { extendConfig } from 'hardhat/config';
 import 'hardhat/types/config';
 
 declare module 'hardhat/types/config' {
@@ -27,3 +30,19 @@ declare module 'hardhat/types/config' {
     };
   }
 }
+
+extendConfig(function (config, userConfig) {
+  config.contractSizer = Object.assign(
+    {
+      alphaSort: false,
+      disambiguatePaths: false,
+      runOnCompile: false,
+      strict: false,
+      only: [],
+      except: [],
+      outputFile: null,
+      unit: 'KiB',
+    },
+    userConfig.contractSizer,
+  );
+});
