@@ -18,7 +18,7 @@ const UNITS = { B: 1, kB: 1000, KiB: 1024 };
 
 task('size-contracts', 'Output the size of compiled contracts')
   .addFlag('noCompile', "Don't compile before running this task")
-  .setAction(async function (args, hre) {
+  .setAction(async (args, hre) => {
     if (!args.noCompile) {
       await hre.run(TASK_COMPILE, { noSizeContracts: true });
     }
@@ -29,7 +29,7 @@ task('size-contracts', 'Output the size of compiled contracts')
       throw new HardhatPluginError(pluginName, `Invalid unit: ${config.unit}`);
     }
 
-    const formatSize = function (size: number) {
+    const formatSize = (size: number) => {
       const divisor = UNITS[config.unit];
       return (size / divisor).toFixed(3);
     };
@@ -60,14 +60,14 @@ task('size-contracts', 'Output the size of compiled contracts')
         initSize: number;
       }[] = JSON.parse((await fs.promises.readFile(outputPath)).toString());
 
-      previousOutput.forEach(function (el) {
+      previousOutput.forEach((el) => {
         previousSizes[el.fullName] = el.deploySize;
         previousInitSizes[el.fullName] = el.initSize;
       });
     }
 
     await Promise.all(
-      fullNames.map(async function (fullName) {
+      fullNames.map(async (fullName) => {
         if (config.only.length && !config.only.some((m) => fullName.match(m)))
           return;
         if (

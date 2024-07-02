@@ -6,7 +6,7 @@ task(TASK_COMPILE)
     'noSizeContracts',
     "Don't size contracts after running this task, even if runOnCompile option is enabled",
   )
-  .setAction(async function (args, hre, runSuper) {
+  .setAction(async (args, hre, runSuper) => {
     await runSuper();
 
     if (
